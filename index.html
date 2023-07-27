@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Poke Dextr</title>
+    <style>
+
+      body {
+        background-color: rgb(47, 102, 147);
+        overflow-x: hidden;
+        overflow-y: hidden;
+        font-family: FreeMono, monospace;
+      }
+
+      main {
+        max-height: 600px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: 15px;
+      }
+
+      .content {
+        display: flex;
+        background-color: #cceeff;
+        height: 100%;
+        width: 90%;
+        border-radius: 60px / 50%;
+        box-shadow: 0px 3px 15px 0px rgba(0,0,0,0.4);
+        background-image: linear-gradient(135deg, rgb(204, 239, 255) 0%, rgb(230, 247, 255) 80%, rgb(204, 239, 255) 100%);
+      }
+
+      @media (max-width: 800px) {
+        .content {
+          background-color: #cceeff;
+          height: 100%;
+          width: 100%;
+          border-radius: 60px / 50%;
+          box-shadow: 0px 3px 15px 0px rgba(0,0,0,0.4);
+        }
+      }
+
+      .titleBar{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0px;
+        padding: 0px, 0px, 0px, 0px;
+        background-image: linear-gradient(90deg, rgb(204, 204, 204) 0%, rgb(204, 204, 204) 15%, rgb(47, 102, 147) 30%, rgb(47, 102, 147) 70%, rgb(204, 204, 204) 85%, rgb(204, 204, 204) 100%);
+      }
+
+      .link{
+        position: relative;
+        right: 20px;
+      }
+
+      h4{
+        position: relative;
+        left: 20px;
+        margin: 0px;
+        border: 0px;
+        padding: 0px, 0px, 0px, 0px;
+      }
+
+      #listing{
+        max-height: 600px;
+        width: 20%;
+        max-width: 180px;
+        margin-top: 10px;
+        margin-left: 20px;
+        list-style: none;
+        overflow-y: scroll;
+        overflow-x: hidden;
+      }
+
+      .li{
+        display: block;
+        width: 100%;
+      }
+
+      li>a{
+        display: block;
+        border: solid black 1px;
+        border-radius: 10px / 50%;
+        margin: 0;
+        padding: 4px;
+        width: 90%;
+        color: black;
+        text-decoration: none;
+        background-image: linear-gradient(145deg, rgb(179, 230, 255) 0%, rgb(230, 247, 255)100%);
+      }
+
+      li>a:hover {
+        display: block;
+        border: solid #3399ff 3px;
+        background-color: #cceeff;
+        margin: 0;
+        padding: 4px;
+        width: 90%;
+        color: black;
+        text-decoration: none;
+      }
+
+      li>a::first-letter {
+        text-transform: uppercase;
+      }
+
+      #result{
+        display: flex;
+        position: relative;
+        top: 100px;
+        left: 20px;
+      }
+
+      #infoList{
+        background-color: #cceeff;
+        list-style: none;
+        height: 200px;
+        padding: 20px;
+        min-width: 200px;
+        border: solid black 1px;
+        border-radius: 10px;
+        margin: 20px;
+      }
+
+      h1::first-letter{
+        text-transform: uppercase;
+      }
+
+      img{
+        margin: 20px;
+        height: 300px;
+        width: 300px;
+        border: solid black 1px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0px 3px 15px 0px rgba(0,0,0,0.75);
+      }
+
+      #offset{
+        position: absolute;
+        top: 540px;
+        left: 30%;
+        display: flex;
+      }
+
+      #offset>a{
+        text-decoration: none;
+        background-color: rgb(0, 68, 204);
+        padding: 8px;
+        margin: 3px;
+        color: white;
+      }
+
+      #offset>p{
+        text-decoration: none;
+        background-color: rgb(77, 136, 255);
+        padding: 8px;
+        margin: 3px;
+        color: white;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <nav class="titleBar">
+        <h4>Poke Dextr</h4>
+        <a href="index.html" class="link" onclick=getPokemonDetail()>Listing</a>
+    </nav>
+    
+    <main id="main" >
+      <div class="content">
+
+        <ul id="listing">
+          
+        </ul>
+
+        <div id="result">
+          
+        </div>
+
+        <nav id="offset">
+          <a href='#' onclick=changeOffset(-50)>PREV</a>
+          <a href='#' onclick=changeOffset(50)>NEXT</a>
+        </nav>
+
+      </div>
+      
+    </main>
+
+    <script>
+      window.onload = getAllPokemon();
+
+
+      
+      async function getAllPokemon(){
+        try{
+          let response = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=50&offset=50");
+          let result = await response.json();
+          displayListing(result);
+        }catch(error){
+            console.log(error);
+        }
+      }
+
+
+
+      
+      function displayListing(data){
+        pokeList = data.results;
+        container = document.querySelector("#listing");
+        html = "";
+        for(i = 0; i <=49; i = i + 1){
+          html += "<li><a href='#' onclick=getPokemonDetail('" + pokeList[i].name + "') class='collection-item' id= " + pokeList[i].name + ">" + pokeList[i].name + "</a></li>";
+        }
+        container.innerHTML = html;
+      }
+
+      
+      
+      async function getPokemonDetail(mon){
+        
+        let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + mon);
+        let result = await response.json();
+        displayPokemonDetail(result);
+      }
+
+      
+      
+      function displayPokemonDetail(data){
+        url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + data.id + ".png";
+        html = '';
+        html += "<img src='" + url + "' alt='" + data.name + "'>"
+        html += `<ul id="infoList">
+          <li><h1>` + data.name + `</h1></li>
+          <li>Dex# ` + data.id + `</li>
+          <li>Weight:` + data.weight + `</li>
+          <li>Height:` + data.height + `</li>
+          <li>Type 1:` + data.types[0].type.name + `</li>
+          `;
+        if(data.types[1] != undefined){
+          html += `<li>Type 2:` + data.types[1].type.name + `</li>`
+        }
+
+        html += "</ul>";
+        container = document.querySelector("#result");
+        container.innerHTML = html;
+      }
+
+      offset = 50;
+
+
+      
+      async function changeOffset(num){
+        
+        offset = offset + num;
+        if(50 <= offset && offset <= 1000){
+          html = `<a href='#' onclick=changeOffset(-50)>PREV</a>
+          <a href='#' onclick=changeOffset(50)>NEXT</a>`;
+        }
+        if(offset == 0){
+          html = `<p>PREV</p>
+          <a href='#' onclick=changeOffset(50)>NEXT</a>`;
+        }
+
+        if(offset == 1050){
+          html = `<a href='#' onclick=changeOffset(-50)>PREV</a>
+          <p>NEXT</p>`;
+        }
+
+        container = document.querySelector("#offset");
+        container.innerHTML = html;
+
+        try{
+          let response = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=50&offset=" + offset);
+          let result = await response.json();
+          displayListing(result);
+        }catch(error){
+            console.log(error);
+        }
+      }
+
+      
+    </script>
+  </body>
+</html>
